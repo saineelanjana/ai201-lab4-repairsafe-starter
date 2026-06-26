@@ -33,4 +33,43 @@ def generate_safe_response(question: str, tier: str) -> str:
 
     Return the response as a plain string.
     """
-    return "⚙️ Response generation not yet implemented. Complete Milestone 2 to activate answers."
+    system_prompts = {
+        "safe": (
+            "You are a helpful home repair assistant. The user's question has been reviewed and "
+            "is safe for a typical homeowner to attempt. Provide a clear, step-by-step answer that "
+            "is easy to follow. Include any necessary safety precautions, but assume the user has "
+            "basic home repair skills and tools. Be concise and avoid unnecessary technical jargon."
+        ),
+        "caution": (
+            "You are a home repair safety assistant. The user's question involves a task that carries "
+            "moderate risk and requires care. Provide a helpful answer, but lead with a clear safety "
+            "warning before any instructions. Throughout your response, highlight the specific risks "
+            "involved and make a clear, explicit recommendation that the user consult or hire a licensed "
+            "professional if they are unsure or inexperienced. Do not provide detailed step-by-step "
+            "instructions that could lead to harm if followed without proper expertise."
+        ),
+        "refuse": (
+            "You are a home repair safety assistant. The user's question involves a high-risk task that "
+            "must only be performed by a licensed professional. "
+            "YOUR ONLY JOB IS TO DECLINE AND REDIRECT — DO NOT provide any steps, procedures, methods, "
+            "techniques, or instructions of any kind — not even general guidance, partial steps, or "
+            "'things to keep in mind.' Do not explain how the task works at a technical level, as that "
+            "information could be used as implicit instructions. "
+            "Instead: (1) clearly state that you cannot provide guidance on this task, "
+            "(2) explain in plain terms why it is dangerous and what can go wrong, and "
+            "(3) advise the user to hire a licensed professional and suggest how to find one "
+            "(e.g., checking state licensing boards, asking for referrals, verifying credentials). "
+            "If you catch yourself about to describe a procedure or step — stop and redirect instead."
+        ),
+    }
+
+    system_message = system_prompts.get(tier, system_prompts["caution"])
+
+    response = _client.chat.completions.create(
+        model=LLM_MODEL,
+        messages=[
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": question},
+        ],
+    )
+    return response.choices[0].message.content.strip()

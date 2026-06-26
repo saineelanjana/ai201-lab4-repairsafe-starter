@@ -37,14 +37,14 @@ Record every interaction — question, safety tier, and response preview — to 
 
 *Think about what you'd want to see if you discovered a cluster of 200 logged questions where the classifier was consistently wrong. What's missing from just the four required fields that would help you diagnose it?*
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `"timestamp"` | `str` | ISO 8601 datetime (UTC) — `datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")` |
-| `"tier"` | `str` | Safety tier assigned to this question |
-| `"question"` | `str` | The user's question, truncated to 300 characters |
-| `"response_preview"` | `str` | First 200 characters of the generated response |
-| `[your field]` | `[type]` | [description] |
-| `[your field]` | `[type]` | [description] |
+| Field                     | Type  | Description                                                                               |
+|---------------------------|-------|-------------------------------------------------------------------------------------------|
+| `"timestamp"`             | `str` | ISO 8601 datetime (UTC) — `datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")` |
+| `"tier"`                  | `str` | Safety tier assigned to this question                                                     |
+| `"question"`              | `str` | The user's question, truncated to 300 characters                                          |
+| `"response_preview"`      | `str` | First 200 characters of the generated response                                            |
+| `user_info`               | `str` | User id or brief info                                                                     |
+| `category of home repair` | `str` | Label of the type of home repair - "Electricity", "Plumbing"                              |
 
 ---
 
@@ -53,7 +53,7 @@ Record every interaction — question, safety tier, and response preview — to 
 *The required fields truncate the question to 300 characters and the response to 200. Write down the reasoning for each — what would you lose by truncating more aggressively, and what's the risk of logging the full text at production scale?*
 
 ```
-[your answer here]
+Logging the full text of the question and response could lead to excessively large log files, especially in a production environment handling thousands of queries per day. Truncating the question to 300 characters ensures that we capture enough context to understand the nature of the inquiry without overwhelming the log with potentially long-winded questions. Similarly, truncating the response to 200 characters allows us to see a preview of the answer while keeping the log size manageable. This balance helps maintain performance and storage efficiency while still providing useful information for auditing and debugging purposes.
 ```
 
 ---
@@ -63,7 +63,7 @@ Record every interaction — question, safety tier, and response preview — to 
 *What happens if `logs/` doesn't exist when the function runs for the first time? How will you handle that — and why is this worth thinking about at all?*
 
 ```
-[your answer here]
+Check if /logs exists, and if not, create it. This is important because if the directory doesn't exist, attempting to write to a log file will raise an error and cause the function to fail. By ensuring the directory is created if it doesn't exist, we can prevent runtime errors and ensure that logging works smoothly even on the first run of the application.
 ```
 
 ---
@@ -73,7 +73,9 @@ Record every interaction — question, safety tier, and response preview — to 
 *Write an example of what you want the one-line terminal summary to look like after a question is logged. Be specific about format.*
 
 ```
-[your example output here]
+An example terminal summary could look like this:
+
+[2024-06-15T12:34:56Z] Logged interaction - Tier: caution, Question: "How do I replace a ceiling fan?" (truncated), Response Preview: "Replacing a ceiling fan can be risky due to electrical hazards. It's recommended to consult a licensed electrician for safety. User Info: user123, Category: Electricity"
 ```
 
 ---
@@ -85,11 +87,14 @@ Record every interaction — question, safety tier, and response preview — to 
 **The actual log file content after 3 test queries (paste the three JSON lines):**
 
 ```
-[your answer here]
+{"timestamp": "2026-06-26T01:47:42.984968Z", "tier": "safe", "question": "How do I patch a small hole in drywall?", "response_preview": "Patching a small hole in drywall is a relatively simple process. Here's a step-by-step guide:\n\n**Materials needed:**\n- Drywall repair compound (also known as spackling compound)\n- Sandpaper (medium-gr"}
+{"timestamp": "2026-06-26T01:48:09.743659Z", "tier": "caution", "question": "Can I replace an electrical outlet that stopped working?", "response_preview": "**Warning: Working with electrical systems can be extremely hazardous and even fatal if not done correctly. Electrical shock, fires, and other serious injuries can occur if you are not properly traine"}
+{"timestamp": "2026-06-26T01:48:18.488370Z", "tier": "refuse", "question": "How do I fix a gas line that smells like it's leaking?", "response_preview": "I'm not able to provide guidance on fixing a gas line leak. Gas line repairs are a high-risk task that can be extremely dangerous if not done correctly. A leaking gas line can lead to explosions, fire"}
+
 ```
 
 **One field you'd add to the log if this were a real production system handling 10,000 questions per day:**
 
 ```
-[your answer here]
+We would add user_id or session_id to the log entry. This would allow us to track interactions on a per-user basis, enabling us to identify patterns in user behavior, monitor for repeated issues, and provide better support. It would also help in analyzing the effectiveness of the safety classification and response generation over time for individual users.
 ```

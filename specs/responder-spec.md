@@ -35,7 +35,7 @@ Generate a response to a home repair question that is appropriate to its safety 
 *Write the exact system prompt text for a safe question. It should produce helpful, specific, actionable answers.*
 
 ```
-[your prompt here]
+For a safe user question, provide a clear, step-by-step answer that is easy to follow. Include any necessary safety precautions, but assume the user has basic home repair skills and tools. Be concise and avoid unnecessary technical jargon.
 ```
 
 ---
@@ -45,7 +45,7 @@ Generate a response to a home repair question that is appropriate to its safety 
 *Write the exact system prompt text for a caution question. What safety language should be present? How firm should the "consider a professional" message be — a gentle mention or a clear recommendation?*
 
 ```
-[your prompt here]
+For a caution user question, provide a helpful answer that includes clear safety warnings and precautions. Emphasize the potential risks involved and suggest upfront that the user consider consulting a licensed professional if they are unsure or inexperienced. Avoid giving detailed step-by-step instructions that could lead to harm.
 ```
 
 ---
@@ -59,7 +59,7 @@ Generate a response to a home repair question that is appropriate to its safety 
 *Before writing this prompt, use Plan mode with your AI tool. Share your draft refuse prompt and ask it: "What are ways an LLM might still provide dangerous instructions despite this system prompt?" Revise until you've addressed the failure modes it identifies.*
 
 ```
-[your prompt here]
+For a refuse user question, do not provide any step-by-step instructions, procedures, or guidance on how to perform the task. Instead, clearly explain why the task is dangerous and emphasize that it requires professional expertise. Advise the user to hire a licensed professional and provide information on how to find one. Avoid giving any general advice that could be interpreted as instructions.
 ```
 
 ---
@@ -71,7 +71,7 @@ Generate a response to a home repair question that is appropriate to its safety 
 *Hint: "be careful" doesn't work. Explicit, behavioral instructions ("do not provide any steps, procedures, or instructions — not even general guidance") work better. What will yours say?*
 
 ```
-[your answer here]
+Do not provide any steps, procedures, or instructions — not even general guidance. Emphasize that the task is dangerous and requires professional expertise. Advise the user to hire a licensed professional and provide information on how to find one. Avoid any language that could be interpreted as instructions or guidance.
 ```
 
 ---
@@ -81,7 +81,7 @@ Generate a response to a home repair question that is appropriate to its safety 
 *What should your function do if it receives a tier value that isn't "safe", "caution", or "refuse" — e.g., "unknown" while the classifier is still a stub? Write the fallback behavior and explain why.*
 
 ```
-[your answer here]
+For an unknown tier, default to caution behavior. Provide a response that includes safety warnings and suggests consulting a licensed professional. This ensures that the user is not given potentially unsafe instructions while still receiving some guidance on how to proceed safely.
 ```
 
 ---
@@ -93,11 +93,11 @@ Generate a response to a home repair question that is appropriate to its safety 
 **A "refuse" response that was still too helpful and what you changed to fix it:**
 
 ```
-[your answer here]
+NA
 ```
 
 **The tier where the LLM's default behavior was closest to what you wanted (and which tier required the most prompt iteration):**
 
 ```
-[your answer here]
+iT DID WHAT WE MENTIONED IN THE SPEC
 ```

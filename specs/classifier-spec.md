@@ -40,17 +40,17 @@ Determine whether a home repair question is safe to answer directly, requires a 
 
 **safe:**
 ```
-[your definition here]
+A question is classified as "safe" if it involves low-risk home repair tasks that can be performed by a typical homeowner without specialized training, tools, or safety equipment.
 ```
 
 **caution:**
 ```
-[your definition here]
+Classify a user question as "caution" if it involves home repair tasks that carry moderate risk, require some specialized knowledge, tools, or safety precautions, and may benefit from professional guidance.
 ```
 
 **refuse:**
 ```
-[your definition here]
+Classify a user question as "refuse" if it involves high-risk home repair tasks that require professional expertise, specialized tools, or pose significant safety hazards, and should not be attempted by an untrained individual.
 ```
 
 ---
@@ -62,7 +62,7 @@ Determine whether a home repair question is safe to answer directly, requires a 
 *Consider: what happens when a question is genuinely ambiguous — e.g., "can I replace my own outlets?" Which tier should that land in, and how does your approach handle questions at the boundary?*
 
 ```
-[your answer here]
+We would give the LLM the tier definitions along with a few examples of questions for each tier (few-shot learning). We would ask it to reason step-by-step before naming the tier, ensuring that it considers the risk level, required expertise, and potential hazards. For ambiguous questions, we would instruct the LLM to classify them as "caution" to err on the side of safety, while providing a clear reasoning for its decision.
 ```
 
 ---
@@ -74,7 +74,11 @@ Determine whether a home repair question is safe to answer directly, requires a 
 *The format you used in Lab 3 (`Label: X / Reasoning: Y`) is a reasonable starting point, but you're not required to use it. Whatever you choose, you'll need to parse it in code — so consider how much variation the LLM might introduce and how you'll handle that.*
 
 ```
-[your answer here]
+Tier: <tier>
+Tools: <tools>
+Skills Involved: <skills>
+Hazards: <hazards>
+Reason: <reason>
 ```
 
 ---
@@ -85,7 +89,10 @@ Determine whether a home repair question is safe to answer directly, requires a 
 
 **System message:**
 ```
-[your prompt here]
+You are a home repair safety assistant. Your task is to classify user questions about home repair into one of three safety tiers: "safe", "caution", or "refuse". Use the following definitions for each tier:
+- "safe": A question is classified as "safe" if it involves low-risk home repair tasks that can be performed by a typical homeowner without specialized training, tools, or safety equipment.
+- "caution": Classify a user question as "caution" if it involves home repair tasks that carry moderate risk, require some specialized knowledge, tools, or safety precautions, and may benefit from professional guidance.
+- "refuse": Classify a user question as "refuse" if it involves high-risk home repair tasks that require professional expertise, specialized tools, or pose significant safety hazards, and should not be attempted by an untrained individual.
 ```
 
 **User message:**
@@ -100,7 +107,11 @@ Determine whether a home repair question is safe to answer directly, requires a 
 *The most consequential classification decision is whether a question lands in "caution" or "refuse." Write down your rule for this boundary — one sentence. Then give two examples of questions that sit close to the line and explain which side they fall on and why.*
 
 ```
-[your rule and examples here]
+If a question has a high risk potential for injury or requires specialized knowledge and tools that a typical homeowner is unlikely to possess, it should be classified as "refuse"; otherwise, if it poses a moderate risk, it should be classified as "caution".
+
+An example of a question that sits close to the line is "Can I replace my own circuit breaker?" This falls on the "refuse" side because it involves working with high-voltage electricity, which poses significant safety hazards and requires professional expertise.
+
+Another example is "Can I install a ceiling fan myself?" This falls on the "caution" side because while it involves some risk (working with electricity and heights), it can be done safely by a homeowner with proper precautions and basic knowledge, making it less hazardous than replacing a circuit breaker.
 ```
 
 ---
@@ -112,7 +123,7 @@ Determine whether a home repair question is safe to answer directly, requires a 
 *Note: failing open (returning "safe" as a fallback) is more dangerous than failing closed (returning "caution"). Which makes more sense here, and why?*
 
 ```
-[your answer here]
+Fall back too "caution" if the LLM response can't be parsed or if tier validation against `VALID_TIERS` fails. Failing closed makes more sense here because it errs on the side of safety, ensuring that potentially risky questions are treated with caution rather than being classified as safe when they might not be.
 ```
 
 ---
@@ -124,11 +135,11 @@ Determine whether a home repair question is safe to answer directly, requires a 
 **One classification that surprised you — question, tier you expected, tier it returned, and why:**
 
 ```
-[your answer here]
+One that surpised us was "How do I reset a GFCI outlet that won't reset?" as it returned "caution" instead of "safe". We expected it to be classified as "safe" because resetting a GFCI outlet is generally a low-risk task. However, the LLM likely considered the potential for electrical hazards and the need for some basic knowledge about electrical systems, leading it to classify the question as "caution".
 ```
 
 **One prompt change you made after seeing the first few outputs, and what it fixed:**
 
 ```
-[your answer here]
+NA
 ```
